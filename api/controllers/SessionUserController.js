@@ -35,21 +35,14 @@ module.exports = {
     },
 
     list: function (req, res) {
-        var data = [];
-        SessionUser.find({userid: {'!': req.user.id}}).exec(function (err, users) {
-            var usersid = _.map(users, function (user) {
-                return user.userid;
-            });
-            User.find({id: usersid}).populate('profiles').exec(function (err, jusers) {
-                _.each(jusers, function (juser) {
-                    var suser = _.find(users, function (user) {
-                        return user.userid == juser.id;
-                    });
-                    suser.juser = juser;
-                    data.push(suser);
-                });
-                return res.json(data);
-            });
+        SessionUser.findWithJUser({userid: {'!': req.user.id}}, function (result) {
+            res.json(result);
+        });
+    },
+
+    get: function(req, res) {
+        SessionUser.findWithJUser(req.param('id'), function (result) {
+            res.json(result);
         });
     }
 };

@@ -1,9 +1,14 @@
-
-function isEmpty (str) {
+function isEmpty(str) {
     return (!str || str.length === 0);
 }
 
 module.exports = {
+
+    get: function (req, res) {
+        User.findOne(req.param('id')).populate('profiles').exec(function (err, user) {
+            return res.send(user);
+        });
+    },
 
     create: function (req, res) {
         UserManager.createUser({
@@ -15,16 +20,16 @@ module.exports = {
             if (!user) {
                 return res.send('This username is already in use', 400);
             }
-            
+
             UserManager.generateUserToken(user, function (err, token) {
                 if (err) return res.send(500);
-                
+
                 return res.send(token, 201);
             });
         });
     },
-    
-   login: function (req, res) {
+
+    login: function (req, res) {
         UserManager.authenticateUserPassword(req.param('username'), req.param('password'),
             function (err, user) {
                 if (err) return res.send(500);
@@ -32,7 +37,7 @@ module.exports = {
 
                 UserManager.generateUserToken(user, function (err, token) {
                     if (err) return res.send(500);
-                    
+
                     return res.send(token, 200);
                 });
             }
@@ -42,7 +47,7 @@ module.exports = {
     forgotPassword: function (req, res) {
         UserManager.generateResetToken(req.param('username'), function (err) {
             if (err) return res.send(500);
-            
+
             res.send(200);
         });
     },
@@ -72,14 +77,14 @@ module.exports = {
         if (isEmpty(token) || isEmpty(newPassword)) {
             return res.send(400);
         }
-        
+
         UserManager.resetPasswordByToken(username, token, newPassword, function (err, user) {
             if (err) return res.send(500);
             if (!user) return res.send(404);
 
             UserManager.generateUserToken(user, function (err, token) {
                 if (err) return res.send(500);
-                
+
                 return res.send(token, 200);
             });
         });

@@ -1,9 +1,11 @@
 var md5 = require('md5');
+var key_del = require('key-del');
 
 module.exports = {
 
     connection: 'mysql',
     tableName: 'j3_users',
+    schema: true,
     attributes: {
 
         id: {
@@ -23,6 +25,21 @@ module.exports = {
         extras: {
             collection: 'community_fields',
             via: 'user'
+        },
+
+        toJSON: function() {
+            var object = this.toObject();
+            object = key_del(object, 'password');
+            if(object.profiles) {
+                object.profile = object.profiles[0];
+                object = key_del(object, 'profiles');
+            }
+
+            if(object.extras) {
+                object.extras = _.merge.apply(null, object.extras);
+            }
+
+            return object;
         },
 
         validatePassword: function (password, done) {

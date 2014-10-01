@@ -6,9 +6,9 @@ module.exports = function (req, res, next) {
     if(req.isSocket) {
         tokenValue = req.body.headers.Authorization;
     } else {
-    	tokenValue = req.headers["Authorization"];
+    	tokenValue = req.headers["authorization"];
     }
-    
+
     // validate we have all params
     if (!tokenValue) {
         return res.send(401);
