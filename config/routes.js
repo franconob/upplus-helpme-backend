@@ -35,8 +35,10 @@ module.exports.routes = {
     'get /sessionuser/list': 'SessionUserController.list',
     'get /sessionuser/:id': 'SessionUserController.get',
     'post /sessionuser/create': 'SessionUserController.create',
+    'post /sessionuser/message': 'SessionUserController.message',
     'post /user/login': 'UserController.login',
-    'get /user/:id': 'UserController.get'
+    'get /user/:id': 'UserController.get',
+    'get /conversations/:from/:to': 'ConversationController.get'
     /***************************************************************************
      *                                                                          *
      * Custom routes here...                                                    *

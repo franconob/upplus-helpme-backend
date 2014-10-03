@@ -13,14 +13,18 @@ module.exports = {
         socketId: 'string',
         name: 'string',
         userid: {
+            type: 'integer',
             primaryKey: true,
             autoIncrement: false
+        },
+        conversations: {
+            collection: 'conversation',
+            via: 'from'
         }
     },
 
     findWithJUser: function (query, cb) {
         var populatedSUsers = [];
-        console.log([1,2], query);
         this.find(query).exec(function (err, susers) {
             if (_.isArray(susers)) {
                 var usersid = _.map(susers, function (user) {

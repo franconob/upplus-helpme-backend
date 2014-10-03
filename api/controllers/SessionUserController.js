@@ -25,13 +25,14 @@ module.exports = {
     },
 
     message: function (req, res) {
-        SessionUser.findOne(req.user.id).exec(function (err, sender) {
-            // Publish a message to that user's "room".  In our app, the only subscriber to that
-            // room will be the socket that the user is on (subscription occurs in the onConnect
-            // method of config/sockets.js), so only they will get this message.
-            SessionUser.message(req.param('to'), {from: sender, msg: req.param('msg')}, req.socket);
-            res.send(200);
-        })
+        Conversation.create({from: req.user.id, to: req.param('to'), message: req.param('message')}).exec(function (err, conversation) {
+            Conversation.findOne(conversation.id).exec(function (err, conv) {
+                conv.populate(function () {
+                    SessionUser.message(req.param('to'), conv, req.socket);
+                    res.send(conv);
+                })
+            });
+        });
     },
 
     list: function (req, res) {
@@ -40,7 +41,7 @@ module.exports = {
         });
     },
 
-    get: function(req, res) {
+    get: function (req, res) {
         SessionUser.findWithJUser(req.param('id'), function (result) {
             res.json(result);
         });
