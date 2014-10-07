@@ -19,7 +19,7 @@ module.exports = {
             var object = this.toObject();
 
             if(object.field_id == 11) {
-                object.country = object.value;
+                object.country = object.value.substr(object.value.lastIndexOf('_')+1);
             }
 
             if(object.field_id == 10) {
