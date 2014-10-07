@@ -5,7 +5,7 @@ function isEmpty(str) {
 module.exports = {
 
     get: function (req, res) {
-        User.findOne(req.param('id')).populate('profiles').exec(function (err, user) {
+        User.findOne(req.param('id')).populate('profiles').populate('extras').exec(function (err, user) {
             return res.send(user);
         });
     },

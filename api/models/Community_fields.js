@@ -30,7 +30,7 @@ module.exports = {
                 object.state = object.value;
             }
 
-            if(object.field_id == 56) {
+            if(object.field_id == 17) {
                 object.areaPractica = object.value;
             }
 
