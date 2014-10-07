@@ -1,10 +1,10 @@
-var md5 = require('md5');
 var key_del = require('key-del');
+var bcrypt = require('bcryptjs');
 
 module.exports = {
 
     connection: 'mysql',
-    tableName: 'j3_users',
+    tableName: 'yswzk_users',
     schema: true,
     attributes: {
 
@@ -43,16 +43,12 @@ module.exports = {
         },
 
         validatePassword: function (password, done) {
-            var hash = this.password.split(':');
-            var salt = hash[1];
-
-            var encPasswd = md5.digest_s(password + salt);
-
-            if(encPasswd + ':' + salt == this.password) {
-                return done(null, true)
-            } else {
-                return done(null, false);
-            }
+            bcrypt.compare(password, this.password, function(err, res) {
+                if(err) {
+                    return done(err, res);
+                }
+                return done(null, res);
+            });
         }
     }
 };

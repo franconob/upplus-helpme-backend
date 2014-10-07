@@ -7,7 +7,7 @@
 
 module.exports = {
     connection: 'mysql',
-    tableName: 'j3_community_users',
+    tableName: 'yswzk_community_users',
     schema: true,
     attributes: {
         userid: {
@@ -26,6 +26,7 @@ module.exports = {
             var object = this.toObject();
 
             object.avatar = 'http://www.upplus4.com/' + object.avatar;
+            delete object.params;
 
             return object;
         }

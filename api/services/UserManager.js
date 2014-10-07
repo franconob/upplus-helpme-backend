@@ -5,7 +5,7 @@ var shortid = require('shortid');
 // this would need to live in sails config
 var jwtSecret = 'xStmbyc066BOFn40gIr29y09Ud94z1P7';
 
-function doesUsernameExist (email, done) {
+function doesUsernameExist(email, done) {
     User
         .findOne({ email: email})
         .done(function (err, user) {
@@ -16,12 +16,12 @@ function doesUsernameExist (email, done) {
 }
 
 /*
-    todo: look at updating this to not increment the failed attempts
-    if the same incorrect password is being used
-*/
-function updateUserLockState (user, done) {
+ todo: look at updating this to not increment the failed attempts
+ if the same incorrect password is being used
+ */
+function updateUserLockState(user, done) {
     var now = moment().utc(),
-        lastFailure = null; 
+        lastFailure = null;
 
     if (user.lastPasswordFailure) {
         lastFailure = moment(user.lastPasswordFailure);
@@ -46,7 +46,7 @@ function updateUserLockState (user, done) {
     user.save(done);
 }
 
-function setUserPassword (user, password, done) {
+function setUserPassword(user, password, done) {
     hash(password, null, function (err, hashedPassword, salt) {
         if (err) return done(err);
 
@@ -88,7 +88,7 @@ module.exports = {
 
     generateUserToken: function (user, done) {
         var issueDate = moment().utc().format(),
-        encodedToken = null;
+            encodedToken = null;
 
         try {
             encodedToken = jwt.encode({ id: user.id, issued: issueDate }, jwtSecret);
@@ -109,7 +109,7 @@ module.exports = {
         // check the issue date to see if the token has expired (quick way to kick out expired tokens)
         // to check accurately for minutes we need to check in seconds as moment rounds the result down 
         // to the nearest unit
-        
+
         try {
             tokenObj = jwt.decode(token, jwtSecret);
         } catch (err) {
@@ -128,16 +128,16 @@ module.exports = {
 
     authenticateUserPassword: function (username, password, done) {
         User
-            .findOne({ username: username})
+            .findOne({ username: username}).populate('profiles').populate('extras')
             .exec(function (err, user) {
+                console.log(user);
                 if (err) return done(err);
                 if (!user || user.block) return done();
 
                 user.validatePassword(password, function (vpErr, isValid) {
                     if (vpErr) return done(vpErr);
 
-                    if (!isValid)
-                    {
+                    if (!isValid) {
                         return done();
                     }
                     else {
@@ -157,15 +157,15 @@ module.exports = {
                 user.resetToken = shortid.generate();
 
                 user.save(function (saveErr, user) {
-                   if (saveErr) return done(saveErr);
-                   
+                    if (saveErr) return done(saveErr);
+
                     /*
-                    todo: email the token to the user - look in db for token or
-                          uncomment line below
-                    */
+                     todo: email the token to the user - look in db for token or
+                     uncomment line below
+                     */
                     // console.log(user.resetToken);
 
-                   done(null);
+                    done(null);
                 });
             });
     },

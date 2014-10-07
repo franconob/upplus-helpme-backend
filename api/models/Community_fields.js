@@ -7,7 +7,7 @@
 
 module.exports = {
     connection: 'mysql',
-    tableName: 'j3_community_fields_values',
+    tableName: 'yswzk_community_fields_values',
     schema: true,
     attributes: {
         user: {
