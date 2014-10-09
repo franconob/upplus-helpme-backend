@@ -22,7 +22,7 @@ module.exports.sockets = {
   *                                                                          *
   ***************************************************************************/
   onConnect: function(session, socket) {
-        SessionUser.watch(socket);
+      SessionUser.watch(socket);
   },
 
 
