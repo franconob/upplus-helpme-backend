@@ -9,6 +9,7 @@ module.exports = {
 
     connection: 'localDiskDb',
     autoPK: false,
+    autosubscribe: ['destroy', 'update'],
     attributes: {
         userid: {
             type: 'integer',
