@@ -10,13 +10,15 @@ module.exports = {
     connection: 'localDiskDb',
     autoPK: false,
     attributes: {
-        socketId: 'string',
-        name: 'string',
         userid: {
             type: 'integer',
             primaryKey: true,
             autoIncrement: false
         },
+        auth: {
+            type: 'string'
+        },
+        name: 'string',
         conversations: {
             collection: 'conversation',
             via: 'from'
@@ -52,7 +54,6 @@ module.exports = {
                 }
 
                 return cb(populatedSUsers);
-
             });
         })
     }

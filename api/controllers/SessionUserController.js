@@ -17,8 +17,6 @@ module.exports = {
 
             User.findOne(user.userid).exec(function (err, juser) {
                 user.juser = juser;
-                SessionUser.subscribe(req.socket, user, 'message');
-                //SessionUser.publishCreate(user, req.socket);
                 res.send(user);
             })
 

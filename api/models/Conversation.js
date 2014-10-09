@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-
     connection: 'localDiskDb',
     autoCreatedAt: true,
     attributes: {

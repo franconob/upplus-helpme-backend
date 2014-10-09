@@ -38,10 +38,15 @@ module.exports = {
                 UserManager.generateUserToken(user, function (err, token) {
                     if (err) return res.send(500);
 
-                    return res.send(token, 200);
+                    SessionUser.create({auth: token.token, userid: user.id, name: 'frnaco'}).exec(function (err, suser) {
+                        SessionUser.findWithJUser(suser.userid, function (suser2) {
+                            SessionUser.publishCreate(suser2[0], req.socket);
+                            return res.send(token, 200);
+                        });
+                    })
                 });
-            }
-        );
+
+            });
     },
 
     forgotPassword: function (req, res) {
@@ -90,5 +95,7 @@ module.exports = {
         });
     },
 
-    _config: {}
-};
+    _config: {
+    }
+}
+;

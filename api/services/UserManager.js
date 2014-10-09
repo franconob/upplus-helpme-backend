@@ -130,7 +130,6 @@ module.exports = {
         User
             .findOne({ username: username}).populate('profiles').populate('extras')
             .exec(function (err, user) {
-                console.log(user);
                 if (err) return done(err);
                 if (!user || user.block) return done();
 
