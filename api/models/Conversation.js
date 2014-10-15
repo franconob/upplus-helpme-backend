@@ -25,6 +25,11 @@ module.exports = {
             type: 'boolean',
             defaultsTo: false
         },
+        type: {
+            type: 'string',
+            enum: ['text', 'image'],
+            defaultsTo: 'text'
+        },
 
         populateSessionUser: function (cb) {
             var self = this;

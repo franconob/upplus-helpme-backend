@@ -24,7 +24,7 @@ module.exports = {
     },
 
     message: function (req, res) {
-        Conversation.create({from: req.user.id, to: req.param('to'), message: req.param('message')}).exec(function (err, conversation) {
+        Conversation.create({from: req.user.id, to: req.param('to'), message: req.param('message'), type: req.param('type')}).exec(function (err, conversation) {
             Conversation.findOne(conversation.id).exec(function (err, conv) {
                 conv.populate(function () {
                     SessionUser.message(req.param('to'), conv, req.socket);
