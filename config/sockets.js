@@ -24,6 +24,12 @@ module.exports.sockets = {
     onConnect: function (session, socket) {
         var token = socket.manager.handshaken[socket.id].token;
 
+        session.user = {
+            token: token
+        };
+
+        session.save();
+
         SessionUser.findOne({auth: token}).exec(function (err, suser) {
             SessionUser.subscribe(socket, suser, 'message');
             SessionUser.watch(socket);
@@ -38,7 +44,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
     onDisconnect: function (session, socket) {
-        var token = socket.manager.handshaken[socket.id].token;
+        var token = session.user.token;
         SessionUser.destroy({auth: token}).exec(function (err) {
             if (err) {
                 throw err;
@@ -56,12 +62,12 @@ module.exports.sockets = {
      * flashsockets by adding 'flashsocket' to this list:                       *
      *                                                                          *
      ***************************************************************************/
-    // transports: [
-    //   'websocket',
-    //   'htmlfile',
-    //   'xhr-polling',
-    //   'jsonp-polling'
-    // ],
+// transports: [
+//   'websocket',
+//   'htmlfile',
+//   'xhr-polling',
+//   'jsonp-polling'
+// ],
 
     /***************************************************************************
      *                                                                          *
@@ -70,7 +76,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    // adapter: 'memory',
+// adapter: 'memory',
 
     /***************************************************************************
      *                                                                          *
@@ -98,11 +104,11 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    // adapter: 'redis',
-    // host: '127.0.0.1',
-    // port: 6379,
-    // db: 'sails',
-    // pass: '<redis auth password>'
+// adapter: 'redis',
+// host: '127.0.0.1',
+// port: 6379,
+// db: 'sails',
+// pass: '<redis auth password>'
 
 
     /***************************************************************************
@@ -153,7 +159,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    authorization: function(req, cb) {
+    authorization: function (req, cb) {
         req.token = req.query.token;
 
         return cb(null, true);
@@ -170,7 +176,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    // 'backwardsCompatibilityFor0.9SocketClients': false,
+// 'backwardsCompatibilityFor0.9SocketClients': false,
 
     /***************************************************************************
      *                                                                          *
@@ -185,7 +191,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    // grant3rdPartyCookie: true,
+// grant3rdPartyCookie: true,
 
     /***************************************************************************
      *                                                                          *
@@ -194,6 +200,7 @@ module.exports.sockets = {
      *                                                                          *
      ***************************************************************************/
 
-    // origins: '*:*',
+// origins: '*:*',
 
-};
+}
+;
