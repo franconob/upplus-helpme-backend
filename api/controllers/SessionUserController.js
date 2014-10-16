@@ -6,22 +6,6 @@
  */
 
 module.exports = {
-    create: function (req, res) {
-        var suser = req.body.user;
-        suser.socketId = sails.sockets.id(req.socket);
-
-        SessionUser.create(suser).exec(function (err, user) {
-            if (err) {
-                throw err;
-            }
-
-            User.findOne(user.userid).exec(function (err, juser) {
-                user.juser = juser;
-                res.send(user);
-            })
-
-        });
-    },
 
     message: function (req, res) {
         Conversation.create({from: req.user.id, to: req.param('to'), message: req.param('message'), type: req.param('type')}).exec(function (err, conversation) {
@@ -45,5 +29,7 @@ module.exports = {
             res.json(result);
         });
     }
+
+
 };
 

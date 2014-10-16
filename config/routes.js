@@ -38,7 +38,8 @@ module.exports.routes = {
     'post /sessionuser/message': 'SessionUserController.message',
     'post /user/login': 'UserController.login',
     'get /user/:id': 'UserController.get',
-    'get /conversations/:from/:to': 'ConversationController.get'
+    'get /conversations/:from/:to': 'ConversationController.get',
+    'post /gps/receive': 'GpsController.receive'
     /***************************************************************************
      *                                                                          *
      * Custom routes here...                                                    *

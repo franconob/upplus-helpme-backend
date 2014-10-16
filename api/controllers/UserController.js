@@ -38,14 +38,21 @@ module.exports = {
                 UserManager.generateUserToken(user, function (err, token) {
                     if (err) return res.send(500);
 
-                    SessionUser.create({auth: token.token, userid: user.id, name: 'frnaco'}).exec(function (err, suser) {
-                        SessionUser.findWithJUser(suser.userid, function (suser2) {
-                            SessionUser.publishCreate(suser2[0], req.socket);
-                            return res.send(token, 200);
-                        });
-                    })
+                    SessionUser.findOne({userid: user.id}).exec(function (err, suser) {
+                        if (!suser) {
+                            SessionUser.create({auth: token.token, userid: user.id, name: user.name}).exec(function (err, suser) {
+                                SessionUser.findWithJUser(suser.userid, function (suser2) {
+                                    SessionUser.publishCreate(suser2[0], req.socket);
+                                    return res.send(token, 200);
+                                });
+                            })
+                        } else {
+                            SessionUser.update({userid: user.id}, {auth: token.token}).exec(function (err, suser) {
+                                return res.send(token, 200);
+                            });
+                        }
+                    });
                 });
-
             });
     },
 

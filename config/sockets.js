@@ -34,6 +34,12 @@ module.exports.sockets = {
             SessionUser.subscribe(socket, suser, 'message');
             SessionUser.watch(socket);
         });
+
+        Gps.watch(socket);
+
+        SessionUser.find().exec(function(err, susers) {
+            Gps.subscribe(socket, _.pluck(susers, 'userid'));
+        });
     },
 
 
@@ -45,6 +51,7 @@ module.exports.sockets = {
      ***************************************************************************/
     onDisconnect: function (session, socket) {
         var token = session.user.token;
+        console.log('desconectando token', token);
         SessionUser.destroy({auth: token}).exec(function (err) {
             if (err) {
                 throw err;

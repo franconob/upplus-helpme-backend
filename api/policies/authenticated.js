@@ -4,7 +4,7 @@ module.exports = function (req, res, next) {
     // this will actually come from the http header
     var tokenValue;
     if(req.isSocket) {
-        tokenValue = req.body.headers.Authorization;
+        tokenValue = req.socket.manager.handshaken[req.socket.id].token;
     } else {
     	tokenValue = req.headers["authorization"];
     }
