@@ -9,9 +9,12 @@ module.exports = {
 
     autosubscribe: ['destroy', 'update', 'create'],
     connection: 'localDiskDb',
+    autoPK: false,
     attributes: {
         userid: {
-            model: 'sessionuser'
+            model: 'sessionuser',
+            primaryKey: true,
+            autoincrement: false
         },
         latitude: 'string',
         longitude: 'string'

@@ -9,7 +9,6 @@ module.exports = {
 
     connection: 'localDiskDb',
     autoPK: false,
-    autosubscribe: ['destroy', 'update'],
     attributes: {
         userid: {
             type: 'integer',
@@ -19,6 +18,7 @@ module.exports = {
         auth: {
             type: 'string'
         },
+        socketId: 'string',
         name: 'string',
         conversations: {
             collection: 'conversation',
