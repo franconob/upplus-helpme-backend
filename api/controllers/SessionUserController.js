@@ -5,8 +5,6 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var async = require('async');
-
 module.exports = {
 
   message: function (req, res) {
@@ -28,7 +26,10 @@ module.exports = {
   list: function (req, res) {
     var haveSession = [];
     SessionUser.find({userid: {'!': req.user.id}}).exec(function (err, sessionUsers) {
-        User.find({limit: 20}).populate('profiles').populate('extras').exec(function (err, users) {
+        User.find({
+          limit: 20,
+          where: {id: {'!': req.user.id}}
+        }).populate('profiles').populate('extras').exec(function (err, users) {
           if (sessionUsers.length > 0) {
             var found;
             _.each(sessionUsers, function (suser) {
@@ -61,12 +62,6 @@ module.exports = {
         });
       }
     )
-    ;
-    /*
-     SessionUser.findWithJUser({userid: {'!': req.user.id}}, function (result) {
-     res.json(result);
-     });
-     */
   },
 
   get: function (req, res) {

@@ -54,6 +54,7 @@ module.exports.sockets = {
    *                                                                          *
    ***************************************************************************/
   onDisconnect: function (session, socket) {
+    console.log('desconectado!');
     SessionUser.destroy({socketId: socket.id}).exec(function (err, userDeleted) {
       if (err) {
         throw err;
