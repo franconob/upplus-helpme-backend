@@ -22,32 +22,34 @@
 
 module.exports.routes = {
 
-    /***************************************************************************
-     *                                                                          *
-     * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
-     * etc. depending on your default view engine) your home page.              *
-     *                                                                          *
-     * (Alternatively, remove this and add an `index.html` file in your         *
-     * `assets` directory)                                                      *
-     *                                                                          *
-     ***************************************************************************/
+  /***************************************************************************
+   *                                                                          *
+   * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
+   * etc. depending on your default view engine) your home page.              *
+   *                                                                          *
+   * (Alternatively, remove this and add an `index.html` file in your         *
+   * `assets` directory)                                                      *
+   *                                                                          *
+   ***************************************************************************/
 
-    'get /sessionuser/list': 'SessionUserController.list',
-    'get /sessionuser/:id': 'SessionUserController.get',
-    'post /sessionuser/create': 'SessionUserController.create',
-    'post /sessionuser/message': 'SessionUserController.message',
-    'post /user/login': 'UserController.login',
-    'get /user/:id': 'UserController.get',
-    'get /conversations/:from/:to': 'ConversationController.get',
-    'post /gps/receive': 'GpsController.receive'
-    /***************************************************************************
-     *                                                                          *
-     * Custom routes here...                                                    *
-     *                                                                          *
-     *  If a request to a URL doesn't match any of the custom routes above, it  *
-     * is matched against Sails route blueprints. See `config/blueprints.js`    *
-     * for configuration options and examples.                                  *
-     *                                                                          *
-     ***************************************************************************/
+  'get /sessionuser/list': 'SessionUserController.list',
+  'get /sessionuser/:id': 'SessionUserController.get',
+  'post /sessionuser/create': 'SessionUserController.create',
+  'post /sessionuser/message': 'SessionUserController.message',
+  'post /user/login': 'UserController.login',
+  'delete /user/logout': 'UserController.logout',
+  'get /user/:id': 'UserController.get',
+  'get /conversations/:from/:to': 'ConversationController.get',
+  'post /gps/receive': 'GpsController.receive',
+  'get /conversations/:from': 'ConversationController.list'
+  /***************************************************************************
+   *                                                                          *
+   * Custom routes here...                                                    *
+   *                                                                          *
+   *  If a request to a URL doesn't match any of the custom routes above, it  *
+   * is matched against Sails route blueprints. See `config/blueprints.js`    *
+   * for configuration options and examples.                                  *
+   *                                                                          *
+   ***************************************************************************/
 
 };

@@ -111,6 +111,21 @@ module.exports = {
     });
   },
 
+  logout: function (req, res) {
+    SessionUser.destroy(req.user.id, function (err) {
+      if (err) {
+        res.send(500, err);
+      }
+
+      req.session.authenticated = false;
+      req.user = {};
+
+      return res.send(200);
+    });
+
+
+  },
+
   _config: {}
 }
 ;

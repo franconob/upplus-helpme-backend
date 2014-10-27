@@ -23,6 +23,10 @@ module.exports = {
         conversations: {
             collection: 'conversation',
             via: 'from'
+        },
+        online: {
+          type: 'boolean',
+          defaultsTo: true
         }
     },
 
