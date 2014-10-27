@@ -25,6 +25,7 @@ module.exports = {
 
   list: function (req, res) {
     var haveSession = [];
+    console.log('llega', req.param('skip'));
     SessionUser.find({userid: {'!': req.user.id}}).exec(function (err, sessionUsers) {
         User.find({
           limit: 20,
