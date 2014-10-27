@@ -25,10 +25,10 @@ module.exports = {
 
   list: function (req, res) {
     var haveSession = [];
-    console.log('llega', req.param('skip'));
     SessionUser.find({userid: {'!': req.user.id}}).exec(function (err, sessionUsers) {
         User.find({
-          limit: 20,
+          limit: 10,
+          skip: req.param('skip') || 0,
           where: {id: {'!': req.user.id}}
         }).populate('profiles').populate('extras').exec(function (err, users) {
           if (sessionUsers.length > 0) {
