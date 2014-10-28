@@ -27,7 +27,8 @@ module.exports = {
         online: {
           type: 'boolean',
           defaultsTo: true
-        }
+        },
+      previousSocketId: 'string'
     },
 
     findWithJUser: function (query, cb) {

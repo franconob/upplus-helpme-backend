@@ -35,11 +35,12 @@ module.exports = {
   //   level: "silent"
   // }
 
-    connections: {
-      mysql: {
-          user: 'upplus4',
-          password: 'Spiralti1017'
-      }
+  connections: {
+    mysql: {
+      database: 'funsclubsnine',
+      user: 'upplus4',
+      password: 'Spiralti1017'
+    }
   }
 
 };

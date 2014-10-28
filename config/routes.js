@@ -40,8 +40,8 @@ module.exports.routes = {
   'delete /user/logout': 'UserController.logout',
   'get /user/:id': 'UserController.get',
   'get /conversations/:from/:to': 'ConversationController.get',
-  'post /gps/receive': 'GpsController.receive',
-  'get /conversations/:from': 'ConversationController.list'
+  'get /conversations': 'ConversationController.list',
+  'post /gps/receive': 'GpsController.receive'
   /***************************************************************************
    *                                                                          *
    * Custom routes here...                                                    *

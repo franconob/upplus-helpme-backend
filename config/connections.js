@@ -43,7 +43,7 @@ module.exports.connections = {
   mysql: {
     adapter: 'sails-mysql',
     host: 'localhost',
-    database: 'upplus4'
+    //database: 'upplus4'
   },
 
   /***************************************************************************

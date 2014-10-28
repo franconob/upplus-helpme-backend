@@ -53,11 +53,8 @@ module.exports = {
             if (!suser) {
               return createSession(token, user);
             } else {
-              SessionUser.destroy({userid: user.id}).exec(function () {
-                SessionUser.publishDestroy(user.id, null, {
-                  previous: suser
-                });
-                return createSession(token, user);
+              SessionUser.update({userid: user.id}, {auth: token.token, online: false}).exec(function (err, updatedUser) {
+                return res.send(token, 200);
               });
             }
           });
@@ -112,9 +109,6 @@ module.exports = {
   },
 
   logout: function (req, res) {
-
-    req.session.authenticated = false;
-    req.user = {};
 
     return res.send(200);
   },

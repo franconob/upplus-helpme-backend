@@ -12,20 +12,21 @@
 
 module.exports = {
 
-    /***************************************************************************
-     * Set the default database connection for models in the development       *
-     * environment (see config/connections.js and config/models.js )           *
-     ***************************************************************************/
+  /***************************************************************************
+   * Set the default database connection for models in the development       *
+   * environment (see config/connections.js and config/models.js )           *
+   ***************************************************************************/
 
-    // models: {
-    //   connection: 'someMongodbServer'
-    // }
+  // models: {
+  //   connection: 'someMongodbServer'
+  // }
 
-    connections: {
-        mysql: {
-            user: 'root',
-            password: 'echesortufc'
-        }
+  connections: {
+    mysql: {
+      database: 'upplus4',
+      user: 'root',
+      password: 'echesortufc'
     }
+  }
 
 };

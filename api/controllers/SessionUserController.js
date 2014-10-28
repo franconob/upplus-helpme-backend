@@ -31,6 +31,7 @@ module.exports = {
           skip: req.param('skip') || 0,
           where: {id: {'!': req.user.id}}
         }).populate('profiles').populate('extras').exec(function (err, users) {
+          console.log(users);
           if (sessionUsers.length > 0) {
             var found;
             _.each(sessionUsers, function (suser) {
@@ -46,7 +47,7 @@ module.exports = {
             var alreadyIn;
 
             alreadyIn = _.find(haveSession, function (suser) {
-              return suser.userid == user.userid
+              return suser.userid == user.id
             });
 
             if (!alreadyIn) {

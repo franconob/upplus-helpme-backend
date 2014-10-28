@@ -24,16 +24,21 @@ module.exports.sockets = {
   onConnect: function (session, socket) {
     var token = socket.manager.handshaken[socket.id].token;
 
-    session.user = {
-      token: token
-    };
-
-    session.save();
 
     SessionUser.findOne({auth: token}).exec(function (err, suser) {
-      SessionUser.update({auth: token}, {socketId: socket.id}).exec(function () {
+
+      SessionUser.update({auth: token}, {
+        socketId: socket.id,
+        online: true,
+        previousSocketId: suser.socketId
+      }).exec(function (err, updatedUser) {
+
         SessionUser.subscribe(socket, suser, 'message');
         SessionUser.watch(socket);
+
+        SessionUser.publishUpdate(updatedUser[0].userid, updatedUser[0], null, {
+          previous: suser
+        });
       })
 
     });
@@ -54,14 +59,19 @@ module.exports.sockets = {
    *                                                                          *
    ***************************************************************************/
   onDisconnect: function (session, socket) {
-    console.log('desconectado!');
-    SessionUser.destroy({socketId: socket.id}).exec(function (err, userDeleted) {
-      if (err) {
-        throw err;
+    SessionUser.update({or: [{socketId: socket.id}, {previousSocketId: socket.id}]},
+      {
+        online: false,
+        auth: null,
+        previousSocketId: null
       }
-      SessionUser.publishDestroy(userDeleted[0].userid);
-
-    });
+    ).
+      exec(function (err, userUpdated) {
+        if (err) {
+          throw err;
+        }
+        SessionUser.publishUpdate(userUpdated[0].userid, userUpdated[0], socket);
+      });
   },
 
 
