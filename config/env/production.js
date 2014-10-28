@@ -38,7 +38,7 @@ module.exports = {
   connections: {
     mysql: {
       database: 'funsclubsnine',
-      user: 'upplus4',
+      user: 'root',
       password: 'Spiralti1017'
     }
   }
