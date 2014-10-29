@@ -28,6 +28,9 @@ module.exports.sockets = {
       console.log('no tiene token, por que?');
     }
     SessionUser.findOne({auth: token}).exec(function (err, suser) {
+      if(!suser) {
+        console.log('debug', token, socket.id);
+      }
 
       SessionUser.update({auth: token}, {
         socketId: socket.id,
