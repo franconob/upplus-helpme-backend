@@ -41,7 +41,7 @@ module.exports = {
             })
           })
         }, function () {
-          res.send(response);
+          res.send(_.sortBy(response, 'createdAt'));
         })
 
       }
