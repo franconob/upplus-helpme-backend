@@ -13,10 +13,12 @@ module.exports = {
   get: function (req, res) {
     var data = [];
     Conversation.find({
-      or: [
-        {from: req.param('from')},
-        {to: req.param('from')}
-      ],
+      where: {
+        or: [
+          {from: req.param('from')},
+          {to: req.param('from')}
+        ]
+      },
       sort: 'createdAt DESC'
     }).populate('to').populate('from').exec(function (err, conversations) {
       if (err) {
@@ -51,11 +53,13 @@ module.exports = {
     var data = {};
 
     Conversation.find({
-      or: [
-        {from: req.user.id},
-        {to: req.user.id}
-      ],
-      sort: 'createdAt DESC',
+      where: {
+        or: [
+          {from: req.user.id},
+          {to: req.user.id}
+        ]
+      },
+      sort: 'createdAt DESC'
     }).exec(function (err, conversations) {
       if (conversations) {
         async.forEach(conversations, function (conversation, callback) {
@@ -82,7 +86,7 @@ module.exports = {
               callback();
             });
           }
-        }, function() {
+        }, function () {
           return res.send(data);
         })
       }
