@@ -19,7 +19,7 @@ module.exports = {
           {to: req.param('from')}
         ]
       },
-      sort: 'createdAt DESC'
+      sort: 'createdAt ASC'
     }).populate('to').populate('from').exec(function (err, conversations) {
       if (err) {
         res.send(500, err);
