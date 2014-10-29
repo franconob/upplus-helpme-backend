@@ -23,11 +23,13 @@ module.exports = {
       }
       if (conversations) {
         data = _.filter(conversations, function (conversation) {
-          return conversation.from.userid == req.param('to') || conversation.to.userid == req.param('to');
+          if (conversation.to) {
+            return conversation.from.userid == req.param('to') || conversation.to.userid == req.param('to');
+          }
+          return false;
         });
 
         var response = [];
-
         async.forEach(data, function (conversation, callback) {
           Conversation.findOne(conversation.id).exec(function (err, conv) {
             conv.populate(function () {
@@ -52,8 +54,8 @@ module.exports = {
         {from: req.user.id},
         {to: req.user.id}
       ]
-    }).exec(function(err, conversations) {
-      if(conversations) {
+    }).exec(function (err, conversations) {
+      if (conversations) {
         var uniqueConversations = _.indexBy(conversations, 'from');
         console.log(uniqueConversations);
       }

@@ -8,19 +8,43 @@
 module.exports = {
 
   message: function (req, res) {
-    Conversation.create({
-      from: req.user.id,
-      to: req.param('to'),
-      message: req.param('message'),
-      type: req.param('type')
-    }).exec(function (err, conversation) {
-      Conversation.findOne(conversation.id).exec(function (err, conv) {
-        conv.populate(function () {
-          SessionUser.message(req.param('to'), conv, req.socket);
-          res.send(conv);
+    SessionUser.findOne(req.param('to')).exec(function (err, suser) {
+      if (!suser) {
+        SessionUser.create({
+          userid: req.param('to'),
+          online: false
+        }).exec(function (err, createdUser) {
+          Conversation.create({
+            from: req.user.id,
+            to: createdUser.userid,
+            message: req.param('message'),
+            type: req.param('type')
+          }).exec(function (err, conversation) {
+            Conversation.findOne(conversation.id).exec(function (err, conv) {
+              conv.populate(function () {
+                SessionUser.message(req.param('to'), conv, req.socket);
+                res.send(conv);
+              })
+            });
+          });
         })
-      });
-    });
+      } else {
+        Conversation.create({
+          from: req.user.id,
+          to: req.param('to'),
+          message: req.param('message'),
+          type: req.param('type')
+        }).exec(function (err, conversation) {
+          Conversation.findOne(conversation.id).exec(function (err, conv) {
+            conv.populate(function () {
+              SessionUser.message(req.param('to'), conv, req.socket);
+              res.send(conv);
+            })
+          });
+        });
+      }
+    })
+
   },
 
   list: function (req, res) {
@@ -31,7 +55,6 @@ module.exports = {
           skip: req.param('skip') || 0,
           where: {id: {'!': req.user.id}}
         }).populate('profiles').populate('extras').exec(function (err, users) {
-          console.log(users);
           if (sessionUsers.length > 0) {
             var found;
             _.each(sessionUsers, function (suser) {
