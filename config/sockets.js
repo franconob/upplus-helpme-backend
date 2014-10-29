@@ -24,7 +24,9 @@ module.exports.sockets = {
   onConnect: function (session, socket) {
     var token = socket.manager.handshaken[socket.id].token;
 
-
+    if(!token) {
+      console.log('no tiene token, por que?');
+    }
     SessionUser.findOne({auth: token}).exec(function (err, suser) {
 
       SessionUser.update({auth: token}, {

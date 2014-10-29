@@ -16,7 +16,8 @@ module.exports = {
       or: [
         {from: req.param('from')},
         {to: req.param('from')}
-      ]
+      ],
+      sort: 'createdAt DESC'
     }).populate('to').populate('from').exec(function (err, conversations) {
       if (err) {
         res.send(500, err);
@@ -53,7 +54,8 @@ module.exports = {
       or: [
         {from: req.user.id},
         {to: req.user.id}
-      ]
+      ],
+      sort: 'createdAt DESC',
     }).exec(function (err, conversations) {
       if (conversations) {
         async.forEach(conversations, function (conversation, callback) {
