@@ -47,7 +47,7 @@ module.exports = {
   },
 
   list: function (req, res) {
-    var data = [];
+    var data = {};
 
     Conversation.find({
       or: [
@@ -56,10 +56,34 @@ module.exports = {
       ]
     }).exec(function (err, conversations) {
       if (conversations) {
-        var uniqueConversations = _.indexBy(conversations, 'from');
-        console.log(uniqueConversations);
+        async.forEach(conversations, function (conversation, callback) {
+          // Si el destinatario soy yo
+          if (conversation.to == req.user.id && typeof data[conversation.from] === "undefined") {
+            User.findOne(conversation.from).populate('profiles').populate('extras').exec(function (err, user) {
+              data[conversation.from] = {
+                message: conversation.message,
+                user: user.toJSON(),
+                type: conversation.type,
+                createdAt: conversation.createdAt
+              };
+              callback();
+            });
+          }
+          if (conversation.from == req.user.id && typeof data[conversation.to] === "undefined") {
+            User.findOne(conversation.to).populate('profiles').populate('extras').exec(function (err, user) {
+              data[conversation.to] = {
+                message: conversation.message,
+                user: user.toJSON(),
+                type: conversation.type,
+                createdAt: conversation.createdAt
+              };
+              callback();
+            });
+          }
+        }, function() {
+          return res.send(data);
+        })
       }
-    })
+    });
   }
 };
-
