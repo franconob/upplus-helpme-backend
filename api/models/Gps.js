@@ -14,7 +14,7 @@ module.exports = {
         userid: {
             model: 'sessionuser',
             primaryKey: true,
-            autoincrement: false
+            autoIncrement: false
         },
         latitude: 'string',
         longitude: 'string'
