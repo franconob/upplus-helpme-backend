@@ -21,7 +21,11 @@ module.exports = {
       model: 'sessionuser'
     },
     message: 'text',
-    read: {
+    sent: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    received: {
       type: 'boolean',
       defaultsTo: false
     },

@@ -18,8 +18,10 @@ module.exports = {
             from: req.user.id,
             to: createdUser.userid,
             message: req.param('message'),
-            type: req.param('type')
+            type: req.param('type'),
+            sent: true
           }).exec(function (err, conversation) {
+            Conversation.subscribe(req, conversation, 'update');
             Conversation.findOne(conversation.id).exec(function (err, conv) {
               conv.populate(function () {
                 SessionUser.message(req.param('to'), conv, req.socket);
@@ -33,8 +35,10 @@ module.exports = {
           from: req.user.id,
           to: req.param('to'),
           message: req.param('message'),
-          type: req.param('type')
+          type: req.param('type'),
+          sent: true
         }).exec(function (err, conversation) {
+          Conversation.subscribe(req, conversation, 'update');
           Conversation.findOne(conversation.id).exec(function (err, conv) {
             conv.populate(function () {
               SessionUser.message(req.param('to'), conv, req.socket);

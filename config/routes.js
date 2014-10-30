@@ -41,6 +41,7 @@ module.exports.routes = {
   'get /user/:id': 'UserController.get',
   'get /conversations/:from/:to': 'ConversationController.get',
   'get /conversations': 'ConversationController.list',
+  'put /conversations/:id/received': 'ConversationController.updateReceived',
   'post /gps/receive': 'GpsController.receive'
   /***************************************************************************
    *                                                                          *

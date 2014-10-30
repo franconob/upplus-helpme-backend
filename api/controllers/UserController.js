@@ -54,6 +54,7 @@ module.exports = {
               return createSession(token, user);
             } else {
               SessionUser.update({userid: user.id}, {auth: token.token, online: false}).exec(function (err, updatedUser) {
+                token.user = user.toJSON();
                 return res.send(token, 200);
               });
             }

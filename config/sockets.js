@@ -38,6 +38,8 @@ module.exports.sockets = {
         previousSocketId: suser.socketId
       }).exec(function (err, updatedUser) {
 
+        Conversation.watch(socket);
+
         SessionUser.subscribe(socket, suser, 'message');
         SessionUser.watch(socket);
 

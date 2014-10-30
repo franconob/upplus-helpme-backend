@@ -41,7 +41,10 @@ module.exports = {
             })
           })
         }, function () {
-          res.send(_.sortBy(response, 'createdAt'));
+          res.send(_.sortBy(response, function (conversation) {
+            var date = new Date(conversation.createdAt);
+            return date.getTime();
+          }));
         })
 
       }
@@ -91,5 +94,16 @@ module.exports = {
         })
       }
     });
+  },
+
+  updateReceived: function (req, res) {
+    var conversationId = req.param('id'),
+        notifyTo = req.param('from');
+
+    Conversation.update(conversationId, {received: true}).exec(function(err, updatedConversation) {
+      Conversation.publishUpdate(conversationId, updatedConversation[0], req.socket);
+
+      res.send(200);
+    })
   }
 };
