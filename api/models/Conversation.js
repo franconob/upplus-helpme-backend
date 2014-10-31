@@ -29,6 +29,10 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     },
+    read: {
+      type: 'boolean',
+      defaultsTo: false
+    },
     type: {
       type: 'string',
       enum: ['text', 'image'],
