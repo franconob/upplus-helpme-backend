@@ -46,9 +46,7 @@ module.exports = {
             return date.getTime();
           }));
         })
-
       }
-
     });
   },
 
@@ -97,10 +95,9 @@ module.exports = {
   },
 
   updateReceived: function (req, res) {
-    var conversationId = req.param('id'),
-        notifyTo = req.param('from');
+    var conversationId = req.param('id');
 
-    Conversation.update(conversationId, {received: true}).exec(function(err, updatedConversation) {
+    Conversation.update(conversationId, {received: true}).exec(function (err, updatedConversation) {
       Conversation.publishUpdate(conversationId, updatedConversation[0], req.socket);
 
       res.send(200);

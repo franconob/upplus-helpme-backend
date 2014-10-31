@@ -24,11 +24,11 @@ module.exports.sockets = {
   onConnect: function (session, socket) {
     var token = socket.manager.handshaken[socket.id].token;
 
-    if(!token) {
+    if (!token) {
       console.log('no tiene token, por que?');
     }
     SessionUser.findOne({auth: token}).exec(function (err, suser) {
-      if(!suser) {
+      if (!suser) {
         console.log('debug', token, socket.id);
       }
 
@@ -37,6 +37,24 @@ module.exports.sockets = {
         online: true,
         previousSocketId: suser.socketId
       }).exec(function (err, updatedUser) {
+
+        Conversation.find({
+          where: {
+            from: updatedUser[0].userid,
+            received: false
+          }
+        }).exec(function (err, conversations) {
+          Conversation.subscribe(socket, conversations, 'update');
+        });
+
+        Conversation.update({
+          to: updatedUser[0].userid,
+          received: false
+        }, {received: true}).exec(function (err, updatedConversations) {
+          _.each(updatedConversations, function (updatedConversation) {
+            Conversation.publishUpdate(updatedConversation.id, updatedConversation, socket);
+          });
+        });
 
         Conversation.watch(socket);
 
