@@ -33,19 +33,21 @@ module.exports = {
         });
 
         var response = [];
-        async.forEach(data, function (conversation, callback) {
-          Conversation.findOne(conversation.id).exec(function (err, conv) {
-            conv.populate(function () {
-              response.push(conv);
-              callback();
+        Conversation.update(_.pluck(conversations, 'id'), {read: true}).exec(function (err, updatedConversations) {
+          async.forEach(data, function (conversation, callback) {
+            Conversation.findOne(conversation.id).exec(function (err, conv) {
+              conv.populate(function () {
+                response.push(conv);
+                callback();
+              })
             })
+          }, function () {
+            res.send(_.sortBy(response, function (conversation) {
+              var date = new Date(conversation.createdAt);
+              return date.getTime();
+            }));
           })
-        }, function () {
-          res.send(_.sortBy(response, function (conversation) {
-            var date = new Date(conversation.createdAt);
-            return date.getTime();
-          }));
-        })
+        });
       }
     });
   },
@@ -60,38 +62,48 @@ module.exports = {
           {to: req.user.id}
         ]
       },
-      sort: 'createdAt DESC'
+      sort: 'id ASC'
     }).exec(function (err, conversations) {
-      if (conversations) {
-        async.forEach(conversations, function (conversation, callback) {
-          // Si el destinatario soy yo
-          if (conversation.to == req.user.id && typeof data[conversation.from] === "undefined") {
-            User.findOne(conversation.from).populate('profiles').populate('extras').exec(function (err, user) {
-              data[conversation.from] = {
-                message: conversation.message,
-                user: user.toJSON(),
-                type: conversation.type,
-                createdAt: conversation.createdAt
-              };
-              callback();
-            });
-          }
-          if (conversation.from == req.user.id && typeof data[conversation.to] === "undefined") {
-            User.findOne(conversation.to).populate('profiles').populate('extras').exec(function (err, user) {
-              data[conversation.to] = {
-                message: conversation.message,
-                user: user.toJSON(),
-                type: conversation.type,
-                createdAt: conversation.createdAt
-              };
-              callback();
-            });
-          }
-        }, function () {
-          return res.send(data);
-        })
+        if (conversations) {
+          async.forEach(conversations, function (conversation, callback) {
+              // Si el destinatario soy yo
+              if (conversation.to == req.user.id) {
+                if (typeof data[conversation.from] === "undefined" || conversation.createdAt > data[conversation.from]) {
+                  User.findOne(conversation.from).populate('profiles').populate('extras').exec(function (err, user) {
+                    data[conversation.from] = {
+                      message: conversation.message,
+                      user: user.toJSON(),
+                      type: conversation.type,
+                      createdAt: conversation.createdAt,
+                      read: conversation.read
+                    };
+                    callback();
+                  });
+                }
+              }
+              if (conversation.from == req.user.id) {
+                if (typeof data[conversation.to] === "undefined" || conversation.createdAt > data[conversation.to]) {
+                  User.findOne(conversation.to).populate('profiles').populate('extras').exec(function (err, user) {
+                    data[conversation.to] = {
+                      message: conversation.message,
+                      user: user.toJSON(),
+                      type: conversation.type,
+                      createdAt: conversation.createdAt,
+                      read: conversation.read
+                    };
+                    callback();
+                  });
+                }
+              }
+            }, function () {
+              return res.send(_.sortBy(data, function (conv) {
+                return new Date(conv.createdAt);
+              }).reverse());
+            }
+          )
+        }
       }
-    });
+    );
   },
 
   updateReceived: function (req, res) {
@@ -102,5 +114,5 @@ module.exports = {
 
       res.send(200);
     })
-  }
+  },
 };
