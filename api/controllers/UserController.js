@@ -36,6 +36,7 @@ module.exports = {
       SessionUser.create(data).exec(function (err, suser) {
         SessionUser.findWithJUser(suser.userid, function (suser2) {
           SessionUser.publishCreate(suser2[0], req.socket);
+          token.user = user;
           return res.send(token, 200);
         });
       })
