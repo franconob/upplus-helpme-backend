@@ -29,7 +29,7 @@ module.exports.sockets = {
     }
     SessionUser.findOne({auth: token}).exec(function (err, suser) {
       if (!suser) {
-        console.log('debug', token, socket.id);
+        return;
       }
 
       SessionUser.update({auth: token}, {
