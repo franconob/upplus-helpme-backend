@@ -75,7 +75,8 @@ module.exports = {
                       user: user.toJSON(),
                       type: conversation.type,
                       createdAt: conversation.createdAt,
-                      read: conversation.read
+                      read: conversation.read,
+                      tome: true
                     };
                     callback();
                   });
@@ -89,7 +90,8 @@ module.exports = {
                       user: user.toJSON(),
                       type: conversation.type,
                       createdAt: conversation.createdAt,
-                      read: conversation.read
+                      read: conversation.read,
+                      tome: false
                     };
                     callback();
                   });
