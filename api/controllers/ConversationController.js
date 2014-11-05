@@ -111,7 +111,7 @@ module.exports = {
   updateReceived: function (req, res) {
     var conversationId = req.param('id');
 
-    Conversation.update(conversationId, {received: true}).exec(function (err, updatedConversation) {
+    Conversation.update(conversationId, {received: true, read: true}).exec(function (err, updatedConversation) {
       Conversation.publishUpdate(conversationId, updatedConversation[0], req.socket);
 
       res.send(200);
