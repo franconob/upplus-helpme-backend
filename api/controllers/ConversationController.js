@@ -70,30 +70,39 @@ module.exports = {
               if (conversation.to == req.user.id) {
                 if (typeof data[conversation.from] === "undefined" || conversation.createdAt > data[conversation.from]) {
                   User.findOne(conversation.from).populate('profiles').populate('extras').exec(function (err, user) {
-                    data[conversation.from] = {
-                      message: conversation.message,
-                      user: user.toJSON(),
-                      type: conversation.type,
-                      createdAt: conversation.createdAt,
-                      read: conversation.read,
-                      tome: true
-                    };
-                    callback();
+                    SessionUser.findOne(user.id).exec(function (err, suser) {
+                      user = user.toJSON();
+                      user.online = suser.online;
+                      data[conversation.from] = {
+                        message: conversation.message,
+                        user: user,
+                        type: conversation.type,
+                        createdAt: conversation.createdAt,
+                        read: conversation.read,
+                        tome: true
+                      };
+                      callback();
+                    })
+
                   });
                 }
               }
               if (conversation.from == req.user.id) {
                 if (typeof data[conversation.to] === "undefined" || conversation.createdAt > data[conversation.to]) {
                   User.findOne(conversation.to).populate('profiles').populate('extras').exec(function (err, user) {
-                    data[conversation.to] = {
-                      message: conversation.message,
-                      user: user.toJSON(),
-                      type: conversation.type,
-                      createdAt: conversation.createdAt,
-                      read: conversation.read,
-                      tome: false
-                    };
-                    callback();
+                    SessionUser.findOne(user.id).exec(function (err, suser) {
+                      user = user.toJSON();
+                      user.online = suser.online;
+                      data[conversation.to] = {
+                        message: conversation.message,
+                        user: user,
+                        type: conversation.type,
+                        createdAt: conversation.createdAt,
+                        read: conversation.read,
+                        tome: false
+                      };
+                      callback();
+                    });
                   });
                 }
               }
