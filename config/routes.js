@@ -37,7 +37,7 @@ module.exports.routes = {
   'post /sessionuser/create': 'SessionUserController.create',
   'post /sessionuser/message': 'SessionUserController.message',
   'post /user/login': 'UserController.login',
-  'delete /user/logout': 'UserController.logout',
+  'post /user/logout': 'UserController.logout',
   'get /user/:id': 'UserController.get',
   'get /conversations/:from/:to': 'ConversationController.get',
   'get /conversations': 'ConversationController.list',
