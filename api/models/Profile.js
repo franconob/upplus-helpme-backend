@@ -25,7 +25,7 @@ module.exports = {
         toJSON: function() {
             var object = this.toObject();
 
-            object.avatar = 'http://www.upplus4.com/' + object.avatar;
+            object.avatar = 'http://www.upplus.es/' + object.avatar;
             delete object.params;
 
             return object;

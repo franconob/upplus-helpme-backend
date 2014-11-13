@@ -37,6 +37,7 @@ module.exports = {
         SessionUser.findWithJUser(suser.userid, function (suser2) {
           SessionUser.publishCreate(suser2[0], req.socket);
           token.user = user;
+          token.user.lastLogin = suser.lastLogin;
           return res.send(token, 200);
         });
       })
@@ -54,8 +55,10 @@ module.exports = {
             if (!suser) {
               return createSession(token, user);
             } else {
-              SessionUser.update({userid: user.id}, {auth: token.token, online: false}).exec(function (err, updatedUser) {
+              var lastLogin = new Date();
+              SessionUser.update({userid: user.id}, {auth: token.token, online: false, lastLogin: lastLogin}).exec(function (err, updatedUser) {
                 token.user = user.toJSON();
+                token.user.lastLogin = lastLogin;
                 return res.send(token, 200);
               });
             }

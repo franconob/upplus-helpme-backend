@@ -7,7 +7,7 @@
 
 module.exports = {
   autosubscribe: ['update', 'delete'],
-  connection: 'localDiskDb',
+  connection: 'mongo',
   autoPK: false,
   attributes: {
     userid: {
@@ -28,7 +28,11 @@ module.exports = {
       type: 'boolean',
       defaultsTo: true
     },
-    previousSocketId: 'string'
+    previousSocketId: 'string',
+    lastLogin: {
+      type: 'datetime',
+      defaultsTo: new Date()
+    }
   },
 
   findWithJUser: function (query, cb) {
