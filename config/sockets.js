@@ -27,15 +27,15 @@ module.exports.sockets = {
     if (!token) {
       console.log('no tiene token, por que?');
     }
-    SessionUser.findOne({auth: token}).exec(function (err, suser) {
-      if (!suser) {
+    User.findOne({auth: token}).exec(function (err, user) {
+      if (!user) {
         return;
       }
 
-      SessionUser.update({auth: token}, {
+      User.update({auth: token}, {
         socketId: socket.id,
         online: true,
-        previousSocketId: suser.socketId
+        previousSocketId: user.socketId
       }).exec(function (err, updatedUser) {
 
         Conversation.find({
@@ -58,11 +58,11 @@ module.exports.sockets = {
 
         Conversation.watch(socket);
 
-        SessionUser.subscribe(socket, suser, 'message');
-        SessionUser.watch(socket);
+        User.subscribe(socket, user, 'message');
+        User.watch(socket);
 
-        SessionUser.publishUpdate(updatedUser[0].userid, updatedUser[0], null, {
-          previous: suser
+        User.publishUpdate(updatedUser[0].userid, updatedUser[0], null, {
+          previous: user
         });
       })
 
@@ -70,9 +70,9 @@ module.exports.sockets = {
 
     Gps.watch(socket);
 
-    SessionUser.find().exec(function (err, susers) {
-      Gps.subscribe(socket, _.pluck(susers, 'userid'));
-      SessionUser.subscribe(socket, susers);
+    User.find().exec(function (err, users) {
+      Gps.subscribe(socket, _.pluck(users, 'id'));
+      User.subscribe(socket, users);
     });
   },
 
@@ -84,7 +84,7 @@ module.exports.sockets = {
    *                                                                          *
    ***************************************************************************/
   onDisconnect: function (session, socket) {
-    SessionUser.update({or: [{socketId: socket.id}, {previousSocketId: socket.id}]},
+    User.update({or: [{socketId: socket.id}, {previousSocketId: socket.id}]},
       {
         online: false,
         auth: null,
@@ -95,7 +95,7 @@ module.exports.sockets = {
         if (err) {
           throw err;
         }
-        SessionUser.publishUpdate(userUpdated[0].userid, userUpdated[0], socket);
+        User.publishUpdate(userUpdated[0].userid, userUpdated[0], socket);
       });
   },
 
