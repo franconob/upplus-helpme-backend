@@ -1,5 +1,6 @@
 isEmpty = (str) ->
   not str or str.length is 0
+
 module.exports =
   get: (req, res) ->
     User.findOne(req.param("id")).exec (err, user) ->
@@ -34,6 +35,7 @@ module.exports =
           auth: token.token
           lastLogin: new Date()
         ).exec (err, updatedUser) ->
+          req.user = updatedUser[0]
           res.send(
             token: token
             user: user,
@@ -78,5 +80,9 @@ module.exports =
 
   logout: (req, res) ->
     res.send 200
+
+  jsonp: (req, res) ->
+    callback = req.param('callback')
+    res.send callback + "(200)"
 
   _config: {}

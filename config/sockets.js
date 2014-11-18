@@ -38,25 +38,24 @@ module.exports.sockets = {
         previousSocketId: user.socketId
       }).exec(function (err, updatedUser) {
 
-        Conversation.find({
+        Peticion.find({
           where: {
-            from: updatedUser[0].userid,
-            received: false
+            cliente: updatedUser[0].id
           }
-        }).exec(function (err, conversations) {
-          Conversation.subscribe(socket, conversations, 'update');
+        }).populate('mensajes', {user: updatedUser[0].id, received: false}).exec(function (err, peticiones) {
+          Peticion.subscribe(socket, peticiones, 'update');
         });
 
-        Conversation.update({
+        Peticion.update({
           to: updatedUser[0].userid,
           received: false
         }, {received: true}).exec(function (err, updatedConversations) {
           _.each(updatedConversations, function (updatedConversation) {
-            Conversation.publishUpdate(updatedConversation.id, updatedConversation, socket);
+            Peticion.publishUpdate(updatedConversation.id, updatedConversation, socket);
           });
         });
 
-        Conversation.watch(socket);
+        Peticion.watch(socket);
 
         User.subscribe(socket, user, 'message');
         User.watch(socket);
@@ -210,7 +209,7 @@ module.exports.sockets = {
     req.token = req.query.token;
 
     return cb(null, true);
-  }
+  },
 
   /***************************************************************************
    *                                                                          *
@@ -223,7 +222,7 @@ module.exports.sockets = {
    *                                                                          *
    ***************************************************************************/
 
-// 'backwardsCompatibilityFor0.9SocketClients': false,
+  'backwardsCompatibilityFor0.9SocketClients': true,
 
   /***************************************************************************
    *                                                                          *
@@ -238,7 +237,7 @@ module.exports.sockets = {
    *                                                                          *
    ***************************************************************************/
 
-// grant3rdPartyCookie: true,
+  grant3rdPartyCookie: true
 
   /***************************************************************************
    *                                                                          *

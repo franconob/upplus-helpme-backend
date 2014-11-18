@@ -30,6 +30,7 @@ module.exports.policies = {
   '*': 'authenticated',
 
   'user': {
+    'jsonp': true,
     'create': true,
     'login': true,
     'forgotPassword': true,

@@ -1,8 +1,6 @@
-key_del = require("key-del")
 bcrypt = require("bcryptjs")
 module.exports =
   connection: "mongo"
-  tableName: "user"
   autosubscribe: ["update", "delete"],
   attributes:
     nombre: "string"
@@ -27,6 +25,7 @@ module.exports =
       type: "boolean"
       defaultsTo: false
 
+
     validatePassword: (password, done) ->
       bcrypt.compare password, @clave, (err, res) ->
         return done(err, res) if err
@@ -36,17 +35,23 @@ module.exports =
     toJSON: () ->
       object = @toObject()
 
-      if object.clave
-        delete object.clave
+      delete object.clave
+      delete object.auth
+      delete object.socketId
+      delete object.previousSocketId
 
-        return object
+      return object
 
   beforeCreate: (values, cb) ->
     bcrypt.hash values.clave, 10, (err, hash) ->
       return cb(err) if err
 
       values.clave = hash
-      console.log values
 
       cb()
+
+  getRolString: (user) ->
+    switch user.rol
+      when 2 then 'cliente'
+      when 3 then 'proveedor'
 

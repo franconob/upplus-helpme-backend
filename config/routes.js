@@ -31,7 +31,7 @@ module.exports.routes = {
    * `assets` directory)                                                      *
    *                                                                          *
    ***************************************************************************/
-
+  'get /jsonp': 'UserController.jsonp',
   'get /sessionuser/list': 'SessionUserController.list',
   'get /sessionuser/:id': 'SessionUserController.get',
   'post /sessionuser/create': 'SessionUserController.create',
@@ -40,7 +40,8 @@ module.exports.routes = {
   'post /user/logout': 'UserController.logout',
   'get /user/:id': 'UserController.get',
   'get /conversations/:from/:to': 'ConversationController.get',
-  'get /conversations': 'ConversationController.list',
+  'get /peticiones-activas': 'PeticionController.listActivas',
+  'get /peticiones/activas/no-leidas': 'PeticionController.countActivasNoLeidas',
   'put /conversations/:id/received': 'ConversationController.updateReceived',
   'post /gps/receive': 'GpsController.receive'
   /***************************************************************************
