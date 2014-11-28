@@ -55,51 +55,7 @@ module.exports =
 
     return
 
-  list: (req, res) ->
-    haveSession = []
-    SessionUser.find(userid:
-      "!": req.user.id
-    ).exec (err, sessionUsers) ->
-      User.find(
-        limit: 10
-        skip: req.param("skip") or 0
-        where:
-          id:
-            "!": req.user.id
-      ).populate("profiles").populate("extras").exec (err, users) ->
-        if sessionUsers.length > 0
-          found = undefined
-          _.each sessionUsers, (suser) ->
-            found = _.find(users,
-              id: suser.userid
-            )
-            suser.juser = found.toJSON()
-            haveSession.push suser
-            return
 
-        response = []
-        _.each users, (user) ->
-          alreadyIn = undefined
-          alreadyIn = _.find(haveSession, (suser) ->
-            suser.userid is user.id
-          )
-          unless alreadyIn
-            response.push
-              userid: user.id
-              name: user.name
-              juser: user
-              online: false
-
-          return
-
-        res.send _.sortBy(response.concat(haveSession),
-          online: false
-        )
-        return
-
-      return
-
-    return
 
   get: (req, res) ->
     SessionUser.findWithJUser req.param("id"), (result) ->

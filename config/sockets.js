@@ -27,29 +27,36 @@ module.exports.sockets = {
     if (!token) {
       console.log('no tiene token, por que?');
     }
-    User.findOne({auth: token}).exec(function (err, user) {
+    User.findOne({token: token}).exec(function (err, user) {
       if (!user) {
         return;
       }
 
-      User.update({auth: token}, {
+      var rol = User.getRolString(user);
+
+      User.update({token: token}, {
         socketId: socket.id,
         online: true,
         previousSocketId: user.socketId
       }).exec(function (err, updatedUser) {
 
-        Peticion.find({
-          where: {
-            cliente: updatedUser[0].id
-          }
-        }).populate('mensajes', {user: updatedUser[0].id, received: false}).exec(function (err, peticiones) {
-          Peticion.subscribe(socket, peticiones, 'update');
+        var query = {};
+        query[rol] = updatedUser[0].id;
+
+        Peticion.find(query).populate('mensajes', {
+          usuario: updatedUser[0].id,
+          recibido: false
+        }).exec(function (err, peticiones) {
+          Peticion.subscribe(socket, peticiones, 'message');
+          _.each(peticiones, function(peticion) {
+            Mensaje.subscribe(socket, _.pluck(peticion.mensajes, 'id'))
+          })
         });
 
         Peticion.update({
           to: updatedUser[0].userid,
-          received: false
-        }, {received: true}).exec(function (err, updatedConversations) {
+          recibido: false
+        }, {recibido: true}).exec(function (err, updatedConversations) {
           _.each(updatedConversations, function (updatedConversation) {
             Peticion.publishUpdate(updatedConversation.id, updatedConversation, socket);
           });
@@ -57,12 +64,15 @@ module.exports.sockets = {
 
         Peticion.watch(socket);
 
-        User.subscribe(socket, user, 'message');
         User.watch(socket);
 
-        User.publishUpdate(updatedUser[0].userid, updatedUser[0], null, {
+        User.publishUpdate(updatedUser[0].id, updatedUser[0], null, {
           previous: user
         });
+
+        session.user = user;
+        session.save();
+
       })
 
     });
@@ -86,7 +96,7 @@ module.exports.sockets = {
     User.update({or: [{socketId: socket.id}, {previousSocketId: socket.id}]},
       {
         online: false,
-        auth: null,
+        token: null,
         previousSocketId: null
       }
     ).
@@ -94,7 +104,7 @@ module.exports.sockets = {
         if (err) {
           throw err;
         }
-        User.publishUpdate(userUpdated[0].userid, userUpdated[0], socket);
+        User.publishUpdate(userUpdated[0].id, userUpdated[0], socket);
       });
   },
 

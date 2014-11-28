@@ -16,7 +16,7 @@ module.exports =
       model: 'user'
     cerrada:
       type: 'boolean'
-      defaulsTo: false
+      defaultsTo: false
     mensajes:
       collection: 'mensaje'
       via: 'peticion'

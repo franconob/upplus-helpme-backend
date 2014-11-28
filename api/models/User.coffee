@@ -47,6 +47,7 @@ module.exports =
       return cb(err) if err
 
       values.clave = hash
+      delete values.r_clave
 
       cb()
 
@@ -54,4 +55,9 @@ module.exports =
     switch user.rol
       when 2 then 'cliente'
       when 3 then 'proveedor'
+
+  getRolStringOther: (user) ->
+    switch user.rol
+      when 2 then 'proveedor'
+      when 3 then 'cliente'
 

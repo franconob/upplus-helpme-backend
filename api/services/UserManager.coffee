@@ -10,20 +10,20 @@ doesUsernameExist = (email, done) ->
 #
 # todo: look at updating this to not increment the failed attempts
 # if the same incorrect password is being used
-# 
+#
 updateUserLockState = (user, done) ->
   now = moment().utc()
   lastFailure = null
   lastFailure = moment(user.lastPasswordFailure)  if user.lastPasswordFailure
-  
+
   # do we have a previously failed login attempt in the last x amount of time
   if lastFailure isnt null and now.diff(lastFailure, "seconds") < 1800
     user.passwordFailures += 1
-    
+
     # lock if this is the 4th incorrect attempt
     user.locked = true  if user.passwordFailures > 3
   else
-    
+
     # reset the failed attempts
     user.passwordFailures = 1
   user.lastPasswordFailure = now.toDate()
@@ -55,12 +55,13 @@ module.exports =
   createUser: (values, done) ->
     doesUsernameExist values.username, (err, exists) ->
       return done(err)  if err
-      
+
       # todo: a better return result
       return done()  if exists
+      values.rol = 2
       User.create(values).exec (createErr, user) ->
         return done(createErr)  if createErr
-        
+
         # todo: send welcome email
         done null, user
         return
@@ -68,6 +69,13 @@ module.exports =
       return
 
     return
+
+  savePerfil: (userid, values, done) ->
+    User.update(userid, values).exec (user, err) ->
+      if err
+        return done  null, err
+      else
+        return donen user[0], null
 
   generateUserToken: (user, done) ->
     issueDate = moment().utc().format()
@@ -87,7 +95,7 @@ module.exports =
 
   authenticateUserToken: (token, done) ->
     tokenObj = null
-    
+
     # check the issue date to see if the token has expired (quick way to kick out expired tokens)
     # to check accurately for minutes we need to check in seconds as moment rounds the result down
     # to the nearest unit
@@ -95,7 +103,7 @@ module.exports =
       tokenObj = jwt.decode(token, jwtSecret)
     catch err
       return done(err)
-    
+
     # find the user and set req.user
     User.findOne(id: tokenObj.id).exec (err, user) ->
       return done(err)  if err
@@ -125,12 +133,12 @@ module.exports =
       user.resetToken = shortid.generate()
       user.save (saveErr, user) ->
         return done(saveErr)  if saveErr
-        
+
         #
         #           todo: email the token to the user - look in db for token or
         #           uncomment line below
-        #           
-        
+        #
+
         # console.log(user.resetToken);
         done null
         return

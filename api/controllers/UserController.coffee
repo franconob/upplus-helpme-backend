@@ -9,9 +9,7 @@ module.exports =
     return
 
   create: (req, res) ->
-    UserManager.createUser
-      username: req.param("username")
-      password: req.param("password")
+    UserManager.createUser req.param('registro')
     , (err, user) ->
       return res.send(500)  if err
       return res.send("This username is already in use", 400)  unless user
@@ -23,6 +21,17 @@ module.exports =
 
     return
 
+  update: (req, res) ->
+    UserManager.savePerfil req.param('id'), req.param('perfil'), (user, err) ->
+      res.send 200
+
+
+  list: (req, res) ->
+    User.find(
+      id: "!": req.user.id
+    ).exec (err, users) ->
+      res.send users
+
   login: (req, res) ->
     UserManager.authenticateUserPassword req.param("username"), req.param("password"), (err, user) ->
       return res.send(500)  if err
@@ -32,10 +41,11 @@ module.exports =
         User.update(
           id: user.id
         ,
-          auth: token.token
+          token: token.token
           lastLogin: new Date()
         ).exec (err, updatedUser) ->
           req.user = updatedUser[0]
+          delete user.imagen
           res.send(
             token: token
             user: user,

@@ -32,17 +32,19 @@ module.exports.routes = {
    *                                                                          *
    ***************************************************************************/
   'get /jsonp': 'UserController.jsonp',
-  'get /sessionuser/list': 'SessionUserController.list',
-  'get /sessionuser/:id': 'SessionUserController.get',
-  'post /sessionuser/create': 'SessionUserController.create',
-  'post /sessionuser/message': 'SessionUserController.message',
+  'get /user/list': 'UserController.list',
   'post /user/login': 'UserController.login',
   'post /user/logout': 'UserController.logout',
+  'post /user': 'UserController.create',
+  'put /user/:id': 'UserController.update',
   'get /user/:id': 'UserController.get',
-  'get /conversations/:from/:to': 'ConversationController.get',
+  'post /peticion': 'PeticionController.create',
+  'get /peticion/:id/mensajes': 'PeticionController.mensajes',
+  'post /peticion/:id/mensaje': 'PeticionController.enviarMensaje',
+  'get /peticion/:from/:to': 'ConversationController.get',
   'get /peticiones-activas': 'PeticionController.listActivas',
   'get /peticiones/activas/no-leidas': 'PeticionController.countActivasNoLeidas',
-  'put /conversations/:id/received': 'ConversationController.updateReceived',
+  'put /peticion/:id/mensaje/:mensajeid/recibido': 'PeticionController.mensajeLeido',
   'post /gps/receive': 'GpsController.receive'
   /***************************************************************************
    *                                                                          *
