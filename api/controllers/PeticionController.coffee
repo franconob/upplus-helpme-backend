@@ -5,14 +5,14 @@ PeticionController
 @help        :: See http://links.sailsjs.org/docs/controllers
 ###
 module.exports = {
-  listActivas: (req, res) ->
+  list: (req, res) ->
     query = {}
 
     yo = User.getRolString req.user
     el = User.getRolStringOther req.user
 
     query[yo] = req.user.id
-    query['cerrada'] = false
+    query['cerrada'] = if req.query.activa is '0' then true else false;
     query['sort'] = 'createdAt DESC'
 
     Peticion.find(query).populate(el).populate('mensajes',
@@ -34,7 +34,18 @@ module.exports = {
         200
 
   countActivasNoLeidas: (req, res) ->
-    Peticion.count({cliente: req.user.id, leida: false, cerrada: false}).exec (err, total) ->
+    query = {};
+    query[User.getRolStringOther req.user] = req.user.id
+    query['leida'] = query['cerrada'] = false
+    Peticion.count(query).exec (err, total) ->
+      res.send
+        total: total
+
+  countCerradasNoLeidas: (req, res) ->
+    query = {};
+    query[User.getRolStringOther req.user] = req.user.id
+    query['cerrada'] = true
+    Peticion.count(query).exec (err, total) ->
       res.send
         total: total
 
@@ -42,10 +53,11 @@ module.exports = {
     Peticion.create(
       cliente: req.user.id
       proveedor: req.param 'proveedor'
-    ).exec () ->
-      res.send 200
+    ).exec (err, peticion) ->
+      res.send peticion
 
   mensajes: (req, res) ->
+    console.log req.param 'id'
     populate = if User.getRolString(req.user) == 'cliente' then 'proveedor' else 'cliente'
 
     Peticion.findOne(req.param('id')).populate('mensajes').populate(populate).exec (err, peticion) ->
@@ -59,6 +71,9 @@ module.exports = {
           mensaje.recibido = mensaje.leido = true
           mensaje.save () ->
             Mensaje.publishUpdate mensaje.id, mensaje, req.socket
+
+      peticion.el = peticion[populate].toJSON()
+      delete peticion[populate]
 
       res.send peticion
 
@@ -82,6 +97,5 @@ module.exports = {
   mensajeLeido: (req, res) ->
     Mensaje.update req.param('mensajeid'), {recibido: true, leido: true}, (err, mensaje) ->
       Mensaje.publishUpdate mensaje[0].id, mensaje[0], req.socket
-
       res.send 200
 }

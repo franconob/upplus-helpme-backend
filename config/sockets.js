@@ -48,30 +48,33 @@ module.exports.sockets = {
           recibido: false
         }).exec(function (err, peticiones) {
           Peticion.subscribe(socket, peticiones, 'message');
-          _.each(peticiones, function(peticion) {
-            Mensaje.subscribe(socket, _.pluck(peticion.mensajes, 'id'))
-          })
-        });
-
-        Peticion.update({
-          to: updatedUser[0].userid,
-          recibido: false
-        }, {recibido: true}).exec(function (err, updatedConversations) {
-          _.each(updatedConversations, function (updatedConversation) {
-            Peticion.publishUpdate(updatedConversation.id, updatedConversation, socket);
+          _.each(peticiones, function (peticion) {
+            Mensaje.subscribe(socket, peticion.mensajes);
           });
+
+          User.watch(socket);
+
+          User.publishUpdate(updatedUser[0].id, updatedUser[0], null, {
+            previous: user
+          });
+
+          session.user = user;
+          session.save();
         });
 
-        Peticion.watch(socket);
+        /*
+         Peticion.update({
+         to: updatedUser[0].userid,
+         recibido: false
+         }, {recibido: true}).exec(function (err, updatedConversations) {
+         _.each(updatedConversations, function (updatedConversation) {
+         Peticion.publishUpdate(updatedConversation.id, updatedConversation, socket);
+         });
+         });
+         */
 
-        User.watch(socket);
+        //Peticion.watch(socket);
 
-        User.publishUpdate(updatedUser[0].id, updatedUser[0], null, {
-          previous: user
-        });
-
-        session.user = user;
-        session.save();
 
       })
 
@@ -80,7 +83,7 @@ module.exports.sockets = {
     Gps.watch(socket);
 
     User.find().exec(function (err, users) {
-      Gps.subscribe(socket, _.pluck(users, 'id'));
+      //Gps.subscribe(socket, _.pluck(users, 'id'));
       User.subscribe(socket, users);
     });
   },

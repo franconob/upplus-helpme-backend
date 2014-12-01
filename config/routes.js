@@ -42,8 +42,9 @@ module.exports.routes = {
   'get /peticion/:id/mensajes': 'PeticionController.mensajes',
   'post /peticion/:id/mensaje': 'PeticionController.enviarMensaje',
   'get /peticion/:from/:to': 'ConversationController.get',
-  'get /peticiones-activas': 'PeticionController.listActivas',
+  'get /peticiones': 'PeticionController.list',
   'get /peticiones/activas/no-leidas': 'PeticionController.countActivasNoLeidas',
+  'get /peticiones/cerradas/no-leidas': 'PeticionController.countCerradasNoLeidas',
   'put /peticion/:id/mensaje/:mensajeid/recibido': 'PeticionController.mensajeLeido',
   'post /gps/receive': 'GpsController.receive'
   /***************************************************************************

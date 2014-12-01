@@ -40,6 +40,8 @@ module.exports =
       delete object.socketId
       delete object.previousSocketId
 
+      object.fullName = object.apellido + " " + object.nombre
+
       return object
 
   beforeCreate: (values, cb) ->
