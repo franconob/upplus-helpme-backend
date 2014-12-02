@@ -29,6 +29,7 @@ module.exports =
   list: (req, res) ->
     User.find(
       id: "!": req.user.id
+      rol: 2
     ).exec (err, users) ->
       res.send users
 
