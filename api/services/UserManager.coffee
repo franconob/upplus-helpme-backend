@@ -75,7 +75,7 @@ module.exports =
       if err
         return done  null, err
       else
-        return donen user[0], null
+        return done user[0], null
 
   generateUserToken: (user, done) ->
     issueDate = moment().utc().format()
