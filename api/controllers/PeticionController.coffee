@@ -36,18 +36,28 @@ module.exports = {
   countActivasNoLeidas: (req, res) ->
     query = {};
     query[User.getRolStringOther req.user] = req.user.id
-    query['leida'] = query['cerrada'] = false
-    Peticion.count(query).exec (err, total) ->
-      res.send
-        total: total
+
+    res.send
+      total: total
 
   countCerradasNoLeidas: (req, res) ->
-    query = {};
+    res.send
+      total: total
+
+  contadores: (req, res) ->
+    query = {}
     query[User.getRolStringOther req.user] = req.user.id
-    query['cerrada'] = true
+    query['leida'] = query['cerrada'] = false
     Peticion.count(query).exec (err, total) ->
-      res.send
-        total: total
+      activas = total
+      query = {}
+      query['cerrada'] = true
+      Peticion.count(query).exec (err, total) ->
+        cerradas = total
+
+        res.send
+          activas: activas
+          cerradas: cerradas
 
   create: (req, res) ->
     Peticion.create(
