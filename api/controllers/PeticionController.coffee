@@ -37,6 +37,24 @@ module.exports = {
     query = {}
     query[User.getRolString req.user] = req.user.id
     query['leida'] = query['cerrada'] = false
+    Peticion.count(query).exec (err, total) ->
+      activas = total
+      query['cerrada'] = true
+      delete query['leida']
+      Peticion.count(query).exec (err, total) ->
+        cerradas = total
+        res.send
+          activas: activas
+          cerradas: cerradas
+
+  create: (req, res) ->
+    Peticion.create(
+      cliente: req.user.id
+      proveedor: req.param 'proveedor'
+    ).exec (err, peticion) ->
+      res.send peticion
+
+  mensajes: (req, res) ->
     populate = if User.getRolString(req.user) == 'cliente' then 'proveedor' else 'cliente'
 
     Peticion.findOne(req.param('id')).populate('mensajes').populate(populate).exec (err, peticion) ->
